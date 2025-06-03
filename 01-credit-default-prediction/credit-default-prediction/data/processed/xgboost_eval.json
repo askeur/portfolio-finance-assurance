@@ -1,0 +1,17 @@
+{
+    "model": "xgboost",
+    "report_text": "              precision    recall  f1-score   support\n\n           0       0.95      0.99      0.97     27995\n           1       0.56      0.21      0.31      2005\n\n    accuracy                           0.94     30000\n   macro avg       0.75      0.60      0.64     30000\nweighted avg       0.92      0.94      0.92     30000\n",
+    "confusion_matrix": {
+        "matrix": [
+            [
+                27663,
+                332
+            ],
+            [
+                1576,
+                429
+            ]
+        ]
+    },
+    "roc_auc": 0.8600524051542869
+}

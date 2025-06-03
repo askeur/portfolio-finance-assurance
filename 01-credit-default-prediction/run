@@ -1,0 +1,3 @@
+mkdir -p app api models src data/raw data/processed notebooks tests
+touch README.md requirements.txt Dockerfile docker-compose.yml .dockerignore
+touch app/app.py api/main.py src/model_training.py

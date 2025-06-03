@@ -1,0 +1,14 @@
+pandas
+scikit-learn
+xgboost
+matplotlib
+shap==0.42.1
+numpy==1.23.5
+fastapi
+uvicorn
+joblib
+requests
+streamlit
+pydantic
+streamlit-authenticator
+

@@ -1,0 +1,17 @@
+{
+    "model": "random_forest",
+    "report_text": "              precision    recall  f1-score   support\n\n           0       0.94      0.99      0.97     27995\n           1       0.58      0.19      0.28      2005\n\n    accuracy                           0.94     30000\n   macro avg       0.76      0.59      0.62     30000\nweighted avg       0.92      0.94      0.92     30000\n",
+    "confusion_matrix": {
+        "matrix": [
+            [
+                27718,
+                277
+            ],
+            [
+                1629,
+                376
+            ]
+        ]
+    },
+    "roc_auc": 0.8415317395028238
+}

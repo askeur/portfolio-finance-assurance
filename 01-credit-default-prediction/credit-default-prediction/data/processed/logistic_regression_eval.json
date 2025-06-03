@@ -1,0 +1,17 @@
+{
+    "model": "logistic_regression",
+    "report_text": "              precision    recall  f1-score   support\n\n           0       0.97      0.84      0.90     27995\n           1       0.21      0.63      0.32      2005\n\n    accuracy                           0.82     30000\n   macro avg       0.59      0.73      0.61     30000\nweighted avg       0.92      0.82      0.86     30000\n",
+    "confusion_matrix": {
+        "matrix": [
+            [
+                23402,
+                4593
+            ],
+            [
+                749,
+                1256
+            ]
+        ]
+    },
+    "roc_auc": 0.8046644952184638
+}

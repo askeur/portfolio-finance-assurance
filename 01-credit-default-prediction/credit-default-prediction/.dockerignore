@@ -1,0 +1,22 @@
+# Python build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Environnements
+venv/
+.env
+
+# Jupyter notebooks
+*.ipynb
+notebooks/
+
+# Données
+*.csv
+*.pkl
+data/raw/
+
+# IDE et système
+.idea/
+.DS_Store
