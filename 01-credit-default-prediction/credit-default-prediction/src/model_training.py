@@ -72,14 +72,9 @@ if __name__ == "__main__":
 
     for name, trainer in models.items():
         model, report, matrix, roc_auc = trainer(X_train, X_val, y_train, y_val)
-        save_results(
-            model, name, report, matrix, roc_auc,
-            
-            BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))  # Remonter à la racine du projet 
-            print("BASE_DIR",BASE_DIR)
-            base_path = os.path.join(BASE_DIR, "01-credit-default-prediction", "credit-default-prediction")
-            print("base_path",base_path)
-            json_path = os.path.join(base_path, "data", "processed", f"{name}_eval.json")
-            model_path = os.path.join(base_path, "models", f"{selected_model}.pkl")
-            
-        )
+        BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))  # Remonter à la racine du projet
+        base_path = os.path.join(BASE_DIR, "01-credit-default-prediction", "credit-default-prediction")
+        json_path = os.path.join(base_path, "data", "processed", f"{name}_eval.json")
+        model_path = os.path.join(base_path, "models", f"{selected_model}.pkl")
+        save_results(model, name, report, matrix, roc_auc, json_path, model_path
+)

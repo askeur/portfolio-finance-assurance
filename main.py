@@ -88,7 +88,7 @@ else:
         st.markdown("### 📂 Projets")
         if st.button("🏠 Revenir à l’accueil"):
             st.session_state.project = None
-            st.query_params["reload"] = "1"  # ⚠️ Force un reload léger via URL
+            st.query_params["reload"] = "1"  
 
     if st.session_state.project == "credit_default":
         launch_api_once()
@@ -97,6 +97,6 @@ else:
         credit_app = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(credit_app)
         credit_app.run_credit_app()
-
+    
     else:
-        st.markdown(f"🛠️ Projet **{st.session_state.project}** en cours de développement.")
+        st.markdown(f"🛠️ Le projet **{st.session_state.project}** est en cours de déploiement.")

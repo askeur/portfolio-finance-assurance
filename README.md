@@ -58,8 +58,8 @@ Sélectionnez un projet dans l'interface pour démarrer.
 ## Notes
 
 - Seul le projet **Credit Default Prediction** est entièrement intégré pour le moment.
-- Les autres projets affichent un message "en cours de développement".
+- Les autres projets affichent un message "est en cours de déploiement".
 
 ---
 
-*Pour toute question, contactez l'auteur du projet.*
+*Pour toute question, contactez askeurnabila@gmail.com.*

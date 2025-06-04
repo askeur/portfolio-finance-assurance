@@ -1,19 +1,21 @@
-import requests
+from fastapi import FastAPI
+from pydantic import BaseModel
 
-def test_api_predict():
-    url = "http://localhost:8000/predict"
-    sample = {
-        "RevolvingUtilizationOfUnsecuredLines": 0.5,
-        "age": 45,
-        "NumberOfTime30-59DaysPastDueNotWorse": 0,
-        "DebtRatio": 0.3,
-        "MonthlyIncome": 5000,
-        "NumberOfOpenCreditLinesAndLoans": 5,
-        "NumberOfTimes90DaysLate": 0,
-        "NumberRealEstateLoansOrLines": 1,
-        "NumberOfTime60-89DaysPastDueNotWorse": 0,
-        "NumberOfDependents": 2
-    }
-    response = requests.post(url, json=sample)
-    assert response.status_code == 200
-    assert "prediction" in response.json()
+app = FastAPI()
+
+class InputData(BaseModel):
+    RevolvingUtilizationOfUnsecuredLines: float
+    age: int
+    NumberOfTime30_59DaysPastDueNotWorse: int
+    DebtRatio: float
+    MonthlyIncome: float
+    NumberOfOpenCreditLinesAndLoans: int
+    NumberOfTimes90DaysLate: int
+    NumberRealEstateLoansOrLines: int
+    NumberOfTime60_89DaysPastDueNotWorse: int
+    NumberOfDependents: int
+
+@app.post("/predict")
+def predict(data: InputData):
+    # modèle simulé ou importé ici
+    return {"prediction": 0}

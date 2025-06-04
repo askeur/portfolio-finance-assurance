@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import requests
 import json
 import os
+import sys
+import subprocess
 import subprocess
 import joblib
 import shap
@@ -21,7 +23,8 @@ def run_credit_app():
         "🔁 Entraînement",
         "📡 Analyse API",
         "🔍 SHAP",
-        "🧪 Prédire un client"
+        "🧪 Prédire un client",
+        "🧪 Tests unitaires"
     ])
 
     # 📦 Choix du modèle
@@ -42,6 +45,7 @@ def run_credit_app():
     model_path = os.path.join(base_path, "models", f"{selected_model}.pkl")
     fig_path = os.path.join(base_path, "reports", "figures")
     model_training_script = os.path.join(base_path, "src", "model_training.py")
+    test_path = os.path.join(base_path, "tests")
 
     if os.path.exists(json_path):
         with open(json_path) as f:
@@ -167,3 +171,37 @@ def run_credit_app():
                 st.error(f"Erreur de prédiction : {e}")
         else:
             st.info("📂 Veuillez charger un fichier CSV et avoir un modèle entraîné.")
+     
+    #🧪 Tests unitaires
+    elif menu == "🧪 Tests unitaires":
+        st.markdown("## 🧪 Lancer les tests unitaires")
+
+        if st.button("▶️ Exécuter les tests"):
+            st.info("Les tests vont être exécutés via `pytest`...")
+            
+            with st.spinner("Exécution des tests en cours..."):
+           
+                if not os.path.isdir(test_path):
+                    st.error(f"❌ Dossier de tests introuvable : {test_path}")
+                else:
+                    env = os.environ.copy()                   
+                    env["PYTHONPATH"] = base_path
+                    #st.write("PYTHONPATH utilisé :", env["PYTHONPATH"])
+
+                    result = subprocess.run(
+                        [sys.executable, "-m", "pytest", test_path, "--maxfail=5", "--disable-warnings", "-q"],
+                        capture_output=True,
+                        text=True,
+                        env=env
+                    )
+
+                    st.subheader("🧾 Résultat des tests :")
+                    st.code(result.stdout + "\n" + result.stderr, language="bash")
+
+                    if result.returncode == 0:
+                        st.success("✅ Tous les tests ont réussi.")
+                    else:
+                        st.warning("⚠️ Certains tests ont échoué. Voir les détails ci-dessus.")
+
+    else:
+        st.info("Cliquez sur le bouton pour exécuter les tests unitaires du projet.")
