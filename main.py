@@ -5,8 +5,16 @@ import subprocess
 import time
 import importlib.util
 
-# Configuration page (doit être premier Streamlit call)
-st.set_page_config(page_title="Portfolio Finance & Assurance", layout="wide")
+
+# Configuration de la page
+st.set_page_config(
+    page_title="🏥 Portfolio Finance & Assurance",
+    page_icon="🏥",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+
 
 # Authentification simple
 VALID_USERNAME = "admin"
@@ -31,24 +39,40 @@ if not st.session_state.authenticated:
 
 # Chemins
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-base_path = os.path.join(BASE_DIR, "01-credit-default-prediction", "credit-default-prediction")
-api_path = os.path.join(base_path, "api")
-app_path = os.path.join(base_path, "app", "credit_app.py")
 
-if not os.path.exists(app_path):
-    st.error(f"❌ Fichier Streamlit introuvable : {app_path}")
+base_path = os.path.join(BASE_DIR, "01-credit-default-prediction", "credit-default-prediction")
+credit_api_path = os.path.join(base_path, "api")
+credit_app_path = os.path.join(base_path, "app", "credit_app.py")
+
+base_path = os.path.join(BASE_DIR, "02-insurance-claims-analysis", "insurance-claims-analysis")
+insurance_api_path = os.path.join(base_path, "api")
+insurance_app_path = os.path.join(base_path, "app", "insurance_app.py")
+
+if not os.path.exists(credit_app_path):
+    st.error(f"❌ Fichier Streamlit introuvable : {credit_app_path}")
     st.stop()
 
-def launch_api_once():
+def run_credit_api():
     if not getattr(st.session_state, "api_launched", False):
         subprocess.Popen(
             ["uvicorn", "main:app", "--reload", "--port", "8000"],
-            cwd=api_path,
+            cwd=credit_api_path,
             creationflags=subprocess.CREATE_NO_WINDOW
         )
         st.session_state.api_launched = True
         time.sleep(2)
 
+def run_insurance_api():
+    if not getattr(st.session_state, "insurance_api_launched", False):
+        subprocess.Popen(
+            ["python", "api/insurance_api.py"],  # ⚠️ ajuste le chemin si nécessaire
+            cwd=base_path,
+            creationflags=subprocess.CREATE_NO_WINDOW
+        )
+        st.session_state.insurance_api_launched = True
+        time.sleep(3)  # Laisse le temps à l’API de démarrer
+
+        
 if "project" not in st.session_state:
     st.session_state.project = None
 
@@ -91,12 +115,21 @@ else:
             st.query_params["reload"] = "1"  
 
     if st.session_state.project == "credit_default":
-        launch_api_once()
+        run_credit_api()
 
-        spec = importlib.util.spec_from_file_location("credit_app", app_path)
+        spec = importlib.util.spec_from_file_location("credit_app", credit_app_path)
         credit_app = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(credit_app)
         credit_app.run_credit_app()
     
+    elif st.session_state.project == "insurance":
+        if not os.path.exists(insurance_app_path):
+            st.error(f"❌ Fichier Streamlit introuvable : {insurance_app_path}")
+            st.stop()
+        run_insurance_api()
+        spec = importlib.util.spec_from_file_location("insurance_app", insurance_app_path)
+        insurance_app = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(insurance_app)
+        insurance_app.run_insurance_app()  
     else:
         st.markdown(f"🛠️ Le projet **{st.session_state.project}** est en cours de déploiement.")

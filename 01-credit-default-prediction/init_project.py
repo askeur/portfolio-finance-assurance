@@ -19,9 +19,15 @@ files = [
     "credit-default-prediction/Dockerfile",
     "credit-default-prediction/docker-compose.yml",
     "credit-default-prediction/.dockerignore",
-    "credit-default-prediction/app/app.py",
+    "credit-default-prediction/app/credit_app.py",
     "credit-default-prediction/api/main.py",
     "credit-default-prediction/src/model_training.py",
+    "credit-default-prediction/src/data_preparation.py",
+    "credit-default-prediction/src/visualization.py",
+    "credit-default-prediction/tests/test_api.py",
+    "credit-default-prediction/tests/test_evaluation.py",
+    "credit-default-prediction/tests/test_preprocessing.py",
+    "credit-default-prediction/tests/test_training.py",
 ]
 
 # Création des dossiers
