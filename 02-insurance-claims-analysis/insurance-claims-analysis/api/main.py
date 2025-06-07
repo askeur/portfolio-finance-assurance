@@ -10,6 +10,7 @@ from flask_cors import CORS
 import pandas as pd
 import numpy as np
 import os
+import sys
 import joblib
 import io
 import json
@@ -19,9 +20,23 @@ from werkzeug.utils import secure_filename
 import tempfile
 
 # Importer nos modules personnalisés
-from data_preparation import InsuranceDataPreprocessor
-from model_training import InsuranceModelTrainer
-from visualization import InsuranceDataVisualizer
+
+import sys
+import os
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+base_path = os.path.join(BASE_DIR, "02-insurance-claims-analysis", "insurance-claims-analysis")
+SRC_PATH = os.path.join(base_path, "src")
+
+# Add the parent directory (base_path) instead of SRC_PATH
+sys.path.insert(0, base_path)
+
+# Keep your original imports
+from src.data_preparation import InsuranceDataPreprocessor
+from src.model_training import InsuranceModelTrainer
+from src.visualization import InsuranceDataVisualizer
+
+
 
 # Configuration logging
 logging.basicConfig(level=logging.INFO)
@@ -229,6 +244,7 @@ def train_models():
         
         # Vérifier que les données préprocessées existent
         processed_path = "data/processed/processed_data.csv"
+        
         if not os.path.exists(processed_path):
             return jsonify({
                 "error": "❌ Données préprocessées non trouvées. Lancez d'abord le preprocessing."

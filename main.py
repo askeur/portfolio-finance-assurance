@@ -65,7 +65,7 @@ def run_credit_api():
 def run_insurance_api():
     if not getattr(st.session_state, "insurance_api_launched", False):
         subprocess.Popen(
-            ["python", "api/insurance_api.py"],  # ⚠️ ajuste le chemin si nécessaire
+            ["python", "api/main.py"],  # 
             cwd=base_path,
             creationflags=subprocess.CREATE_NO_WINDOW
         )

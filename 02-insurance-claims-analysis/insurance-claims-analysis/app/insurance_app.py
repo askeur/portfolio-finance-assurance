@@ -11,6 +11,7 @@ import numpy as np
 import requests
 import json
 import os
+import sys
 import plotly.express as px
 import plotly.graph_objects as go
 from PIL import Image
@@ -21,6 +22,8 @@ from datetime import datetime
 
 # Configuration de l'API
 API_BASE_URL = "http://localhost:5000"
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+base_path = os.path.join(BASE_DIR, "02-insurance-claims-analysis", "insurance-claims-analysis")
 
 
 # CSS personnalisé
@@ -57,8 +60,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-
-
 def check_api_status():
     """Vérifier l'état de l'API"""
     try:
@@ -68,7 +69,6 @@ def check_api_status():
         return False, None
 
 def display_header():
-   
     # Vérifier l'état de l'API
     api_status, status_data = check_api_status()
     
@@ -93,7 +93,7 @@ def sidebar_navigation():
     st.sidebar.title("🧭 Navigation")
     
     pages = {
-        "🏠 Accueil": "home",
+        "📋 Présentation": "home",
         "📊 État du Système": "status", 
         "📤 Upload de Données": "upload",
         "🔧 Preprocessing": "preprocess",
@@ -108,7 +108,7 @@ def sidebar_navigation():
 
 def home_page():
     """Page d'accueil"""
-    st.header("🏠 Accueil")
+    st.title("🏥 Analyse d'Assurance Santé")
     
     col1, col2 = st.columns(2)
     
@@ -264,7 +264,6 @@ def upload_page():
         if bene_file and claims_file:
             with st.spinner("Upload en cours..."):
                 try:
-
                     files = {
                         'bene_file': (bene_file.name, bene_file.getvalue(), 'text/csv'),
                         'claims_file': (claims_file.name, claims_file.getvalue(), 'text/csv')
@@ -290,12 +289,142 @@ def upload_page():
                         with col2:
                             claims_info = result['files']['claims_file']
                             st.write("**Réclamations:**")
+                            st.write(f"- Shape: {claims_info['shape']}")
+                            st.write(f"- Colonnes: {len(claims_info['columns'])}")
 
+                    else:
+                        st.error(f"❌ Erreur upload: {response.status_code}")
+                        
                 except Exception as e:
-                    st.error(f"❌ Une erreur s’est produite pendant l’upload : {e}")
+                    st.error(f"❌ Une erreur s'est produite pendant l'upload : {e}")
+        else:
+            st.warning("⚠️ Veuillez sélectionner les deux fichiers avant d'uploader.")
 
+def preprocess_page():
+    """Page de preprocessing"""
+    st.header("🔧 Preprocessing des Données")
+    st.info("Page de preprocessing en cours de développement...")
+    
+    if st.button("🚀 Lancer le Preprocessing"):
+        with st.spinner("Preprocessing en cours..."):
+            try:
+                response = requests.post(f"{API_BASE_URL}/preprocess")
+                if response.status_code == 200:
+                    st.success("✅ Preprocessing réussi !")
+                else:
+                    st.error(f"❌ Erreur preprocessing: {response.status_code}")
+            except Exception as e:
+                st.error(f"❌ Erreur: {e}")
+
+def training_page():
+    """Page d'entraînement"""
+    st.header("🤖 Entraînement des Modèles")
+    st.markdown("Cliquez sur le bouton ci-dessous pour entraîner les modèles de classification et clustering.")
+
+    model_types = st.multiselect(
+        "Types de modèles à entraîner",
+        ["classification", "clustering"],
+        default=["classification", "clustering"]
+    )
+
+    optimize = st.checkbox("🔍 Optimisation automatique des modèles", value=True)
+
+    if st.button("🚀 Entraîner les Modèles"):
+        with st.spinner("⏳ Entraînement en cours..."):
+            try:
+                payload = {
+                    "model_types": model_types,
+                    "optimize": optimize
+                }
+                response = requests.post(f"{API_BASE_URL}/train", json=payload)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    st.success("✅ Entraînement terminé avec succès !")
+                    
+                    # Résumé des résultats
+                    st.subheader("📊 Résultats d'Entraînement")
+                    results = data.get("results", {})
+
+                    if "classification" in results:
+                        st.markdown("### 📘 Classification")
+                        st.write(f"- Modèles entraînés : {results['classification']['models_trained']}")
+                        st.write(f"- Liste : {', '.join(results['classification']['models'])}")
+
+                    if "clustering" in results:
+                        st.markdown("### 📗 Clustering")
+                        st.write(f"- Modèles entraînés : {results['clustering']['models_trained']}")
+                        st.write(f"- Liste : {', '.join(results['clustering']['models'])}")
+
+                    # Meilleur modèle
+                    best_model = results.get("best_model")
+                    if best_model:
+                        st.success(f"🏆 Meilleur modèle : **{best_model}**")
+
+                    # Fichiers générés
+                    st.markdown("### 📁 Fichiers Générés")
+                    st.write(data.get("files_generated"))
+
+                else:
+                    error = response.json().get("error", "Erreur inconnue.")
+                    st.error(f"❌ Erreur entraînement : {error}")
+
+            except Exception as e:
+                st.error(f"❌ Exception : {e}")
+
+
+def predictions_page():
+    """Page de prédictions"""
+    st.header("🔮 Prédictions")
+    st.info("Page de prédictions en cours de développement...")
+
+def visualizations_page():
+    """Page de visualisations"""
+    st.header("📈 Visualisations Automatiques")
+
+    if st.button("🖼️ Générer les visualisations"):
+        with st.spinner("⏳ Génération des visualisations en cours..."):
+            try:
+                response = requests.get(f"{API_BASE_URL}/visualize")
+                if response.status_code == 200:
+                    data = response.json()
+                    st.success(data.get("message", "✅ Visualisations générées."))
+
+                    image_files = data.get("files", [])
+                    image_dir = os.path.join(base_path, "reports", "figures")
+
+                    if not image_files:
+                        st.warning("⚠️ Aucune image générée.")
+                        return
+
+                    st.subheader("📂 Visualisations Générées")
+                    for img_file in image_files:
+                        img_path = os.path.join(image_dir, img_file)
+                        try:
+                            with open(img_path, "rb") as f:
+                                img_bytes = f.read()
+                            
+                            st.image(img_bytes, caption=img_file, use_container_width=True)
+
+                        except Exception as e:
+                            st.error(f"❌ Impossible d'afficher {img_file}: {e}")
+
+                else:
+                    error = response.json().get("error", "Erreur inconnue.")
+                    st.error(f"❌ Échec: {error}")
+
+            except Exception as e:
+                st.error(f"❌ Exception lors de la requête: {e}")
+
+
+def models_page():
+    """Page de gestion des modèles"""
+    st.header("📋 Gestion des Modèles")
+    st.info("Page de gestion des modèles en cours de développement...")
 
 def run_insurance_app():
+    """Fonction principale pour lancer l'application Streamlit"""
+    
     display_header()
     page = sidebar_navigation()
 
@@ -316,3 +445,6 @@ def run_insurance_app():
     elif page == "models":
         models_page()
 
+# Point d'entrée si le script est exécuté directement
+if __name__ == "__main__":
+    run_insurance_app()
